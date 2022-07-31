@@ -30,7 +30,70 @@ export const TransactionProvider = ({ children }) => {
         setFormData((prevState) => ({ ...prevState, [name]: e.target.value }));
     }
 
-    /// send Function
+    const checkIfWalletIsConnected = async () => {
+        try {
+            if(!ethereum) return alert("Please install Metamask.");
+
+            const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+            if(accounts.length) {
+                setCurrentAccount(accounts[0]);
+                // getAllTransactions();
+            }else {
+                console.log("No accounts found.");
+            }
+            // console.log(accounts);
+        } catch(error){
+            console.log(error);
+            throw new Error("No ethereum object.");
+        }
+    }
+
+    const connectWallet = async () => {
+        try {
+            if(!ethereum) return alert("Please install Metamask.");
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            setCurrentAccount(accounts[0]);
+        } catch(error) {
+            console.log(error);
+            throw new Error("No ethereum object.");
+        }
+    }
+
+    const sendTransaction = async () => {
+        try {
+            if(!ethereum) return alert("Please install Metamask.");
+
+            const { addressTo, amount, keyword, message } = formData;
+            const transactionContract = getEthereumContract();
+            const parsedAmount = ethers.utils.parseEther(amount);
+            await ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [{
+                    from: currentAccount,
+                    to: addressTo,
+                    gas: '0x5208', // 21000 -> 0.00021 ether gas weight
+                    value: parsedAmount._hex, // amount to Hexdecimal parsedHem
+                }]
+            });
+
+            const transactionHash = await transactionContract.addToBlockchain(addressTo, parsedAmount, message, keyword);
+            
+            setIsLoading(true);
+            console.log(`Loading - ${transactionHash.hash}`);
+
+            await transactionHash.wait();
+
+            setIsLoading(false);
+            console.log(`Success - ${transactionHash.hash}`);
+
+            const transactionCount = await transactionContract.getTransactionCount();
+            setTransactionCount(transactionCount.toNumber());
+        } catch(error) {
+            console.log(error);
+            throw new Error("No ethereum object.");
+        }
+    }
 
     useEffect(() => {
         checkIfWalletIsConnected();
