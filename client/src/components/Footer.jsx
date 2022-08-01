@@ -19,6 +19,11 @@ const Footer = () => {
         <p className='text-white text-sm text-center'>info@krypto.org</p>
       </div>
       <div className='sm:w-[90%] w-full h-[0.25px] bg-gray-400 mt-5' />
+      <div className='sm:w-[90%] w-full flex justify-between items-center mt-3'>
+        <p className='text-white text-sm text-center font-semibold'>@Krypto 2022</p>
+        <p className='text-white text-sm text-center font-semibold'>All rights reserved</p>
+
+      </div>
     </div>
   )
 }
