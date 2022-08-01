@@ -8,6 +8,7 @@ import useFetch from '../hooks/useFetch';
 const TransactionCard = ({ addressTo, addressFrom, timestamp, message, keyword, amount, url }) => {
   
   const gifUrl = useFetch({ keyword });
+  const dummyGif = "https://media4.popsugar-assets.com/files/2013/11/07/832/n/1922398/eb7a69a76543358d_28.gif";
   
   return (
     <div className="bg-[#181918] m-4 flex flex-1
@@ -43,7 +44,7 @@ const TransactionCard = ({ addressTo, addressFrom, timestamp, message, keyword, 
                 </div>
 
                 <img 
-                  src={gifUrl || url}
+                  src={gifUrl || dummyGif}
                   alt="gif"
                   className="w-full h-64 2xl:h-96 rounded-md shadow-lg object-cover"
                 />
@@ -58,7 +59,7 @@ const TransactionCard = ({ addressTo, addressFrom, timestamp, message, keyword, 
 }
 
 const Transactions = () => {
-  const { currentAccount } = useContext(TransactionContext);
+  const { currentAccount, transactions } = useContext(TransactionContext);
   return (
     <div className="flex w-full justify-center items-center 2xl:px-20 gradient-bg-transactions">
         <div className="flex flex-col md:p-12 py-12 px-4">
@@ -76,7 +77,7 @@ const Transactions = () => {
           )}
           {/* Loop through all of the transactions */}
             <div className="flex flex-wrap justify-center items-center mt-10">
-              {dummyData.reverse().map((transaction, i) => (
+              {transactions.reverse().map((transaction, i) => (
                 <TransactionCard key={i} {...transaction} />
               ))}
             </div>
